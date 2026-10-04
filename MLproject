@@ -1,0 +1,49 @@
+name: deer-hunt-mlflow
+
+python_env: python_env.yaml
+
+entry_points:
+  main:
+    parameters:
+      episodes: {type: float, default: 1500}
+      lr: {type: float, default: 0.0005}
+      gamma: {type: float, default: 0.95}
+      hidden_size: {type: float, default: 256}
+      batch_size: {type: float, default: 64}
+      epsilon_decay: {type: float, default: 0.997}
+      target_sync_every: {type: float, default: 25}
+      eval_every: {type: float, default: 100}
+      eval_episodes: {type: float, default: 200}
+      seed: {type: float, default: 42}
+      num_hunters: {type: float, default: 3}
+      max_turns: {type: float, default: 50}
+      hunter_policy: {type: string, default: greedy}
+      register_as: {type: string, default: ""}
+    command: >-
+      python train.py
+      --episodes {episodes} --lr {lr} --gamma {gamma} --hidden-size {hidden_size}
+      --batch-size {batch_size} --epsilon-decay {epsilon_decay}
+      --target-sync-every {target_sync_every} --eval-every {eval_every}
+      --eval-episodes {eval_episodes} --seed {seed}
+      --env-num-hunters {num_hunters} --env-max-turns {max_turns}
+      --env-hunter-policy {hunter_policy} --register-as {register_as}
+
+  evaluate:
+    parameters:
+      model_uri: string
+      episodes: {type: float, default: 500}
+      seed: {type: float, default: 123}
+    command: "python evaluate.py --model-uri {model_uri} --episodes {episodes} --seed {seed}"
+
+  sweep:
+    parameters:
+      trials: {type: float, default: 8}
+      episodes: {type: float, default: 800}
+      seed: {type: float, default: 0}
+    command: "python sweep.py --trials {trials} --episodes {episodes} --seed {seed}"
+
+  import_checkpoints:
+    parameters:
+      deer_hunt_dir: path
+      episodes: {type: float, default: 500}
+    command: "python import_checkpoints.py --deer-hunt-dir {deer_hunt_dir} --episodes {episodes}"
